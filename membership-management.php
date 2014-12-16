@@ -21,7 +21,8 @@
  */
 function mma_edit_user_table(){
 	global $wpdb;
-	$sql = "ALTER TABLE wp_users ADD membership_management_level int";
+	$table_name = $wpdb->prefix . 'users';
+	$sql = 'ALTER TABLE ' . $table_name . ' ADD membership_management_level int';
 	$wpdb->query($sql);
 }
 register_activation_hook(__FILE__, 'mma_edit_user_table');
@@ -31,7 +32,8 @@ register_activation_hook(__FILE__, 'mma_edit_user_table');
  */
 function mma_delete_column_user_table(){
 	global $wpdb;
-	$sql = "ALTER TABLE wp_users DROP COLUMN membership_management_level";
+	$table_name = $wpdb->prefix . 'users';
+	$sql = 'ALTER TABLE ' . $table_name . ' DROP COLUMN membership_management_level';
 	$wpdb->query($sql);
 }
 register_deactivation_hook(__FILE__, 'mma_delete_column_user_table');
@@ -65,5 +67,27 @@ function mt_add_pages() {
 function membership_management_page() {
     echo "<h2>" . "Membership Management" . "</h2>";
 }
+
+/*
+ * get testimonials by shortcode
+ */
+function membership_management_shortcode( $atts, $content = null ) {
+	global $wpdb;
+	$current_user = wp_get_current_user();
+	$table_name = $wpdb->prefix . 'users';
+    $a = shortcode_atts( array(
+        'level' => null,
+    ), $atts );
+	$id = $a['level'];
+	$row = $wpdb->get_row( $wpdb->prepare('SELECT membership_management_level FROM ' . $table_name . ' WHERE id = %d', $current_user->ID) );
+
+	if($id >= $row->membership_management_level){
+		$htmlString = $content;
+	}else{
+		$htmlString = 'sorry can\'t view';
+	}
+	return $htmlString;
+}
+add_shortcode( 'membership management', 'membership_management_shortcode' );
 
 ?>
