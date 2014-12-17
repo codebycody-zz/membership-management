@@ -64,8 +64,14 @@ function mt_add_pages() {
 /*
  * membership_management_page() displays the page content for the custom Test Toplevel menu
  */
-function membership_management_page() {
-    echo "<h2>" . "Membership Management" . "</h2>";
+/*
+ * Check if the user can manage plugin options
+ */
+function membership_management_page(){
+	if(!current_user_can('manage_options')){
+		wp_die('You do not have sufficient permissions to access this page.');
+	}
+	require('options-page-wrapper.php');
 }
 
 /*
@@ -89,5 +95,7 @@ function membership_management_shortcode( $atts, $content = null ) {
 	return $htmlString;
 }
 add_shortcode( 'membership management', 'membership_management_shortcode' );
+
+
 
 ?>
