@@ -1,33 +1,32 @@
 <?php
 
 $totalUsers = count(get_users());
+
+if(isset($_POST['new_role']) && isset($_POST['user'])){
+	$users = $_POST['user'];
+	global $wpdb;
+	$table_name = $wpdb->prefix . 'users';
+	foreach ($users as $user) {
+		$sql = 'UPDATE ' . $table_name . ' SET membership_management_level = ' . $_POST['new_role'] . ' WHERE ID = ' . $user;
+		$wpdb->query($sql);
+	}
+}
 ?>
 <div class="wrap">
 	<div id="poststuff">
 		<div id="post-body" class="metabox-holder columns-1">
 			<h1>Membership Management</h1>
-			<form method="POST" action="" id="edit-membership-level">
-				<input type="hidden" value="all" class="post_status_page" name="post_status">
-				<input type="hidden" value="page" class="post_type_page" name="post_type">
-				<input type="hidden" value="abeed10a8c" name="_wpnonce" id="_wpnonce">
-				<input type="hidden" value="/wordpress/wp-admin/edit.php?post_type=page" name="_wp_http_referer">
+			<form method="post" action="">
 				<div class="tablenav top">
-					<div class="alignleft actions bulkactions">
-						<label class="screen-reader-text" for="bulk-action-selector-top">Select bulk action</label>
-						<select id="bulk-action-selector-top" name="action">
-							<option selected="selected" value="-1">Bulk Actions</option>
-							<option class="hide-if-no-js" value="edit">Edit</option>
-							<option value="trash">Move to Trash</option>
-						</select>
-						<input type="submit" value="Apply" class="button action" id="doaction" name="">
-					</div>
 					<div class="alignleft actions">
-						<label class="screen-reader-text" for="filter-by-date">Filter by date</label>
-						<select id="filter-by-date" name="m">
-							<option value="0" selected="selected">All dates</option>
-							<option value="201410">October 2014</option>
-						</select>
-						<input type="submit" value="Filter" class="button" id="post-query-submit" name="filter_action">
+						<label for="new_role" class="screen-reader-text">Change role to…</label>
+							<select id="new_role" name="new_role">
+								<option value="">Change level to…</option>
+								<option value="1">Gold</option>
+								<option value="2">Silver</option>
+								<option value="3">Bronze</option>
+							</select>
+						<input type="submit" value="Change" class="button" id="changelevel" name="changelevel">
 					</div>
 					<div class="tablenav-pages one-page">
 						<span class="displaying-num"><?php echo $totalUsers; ?> users</span>
@@ -94,7 +93,7 @@ $totalUsers = count(get_users());
 						<tr class="alternate" id="user-<?php echo $value->ID; ?>">
 							<th class="check-column" scope="row">
 								<label for="cb-select-1" class="screen-reader-text">Select <?php echo $value->user_login; ?></label>
-								<input type="checkbox" value="1" class="administrator" id="user_<?php echo $value->ID; ?>" name="users[]">
+								<input type="checkbox" value="<?php echo $value->ID; ?>" class="user" id="user_<?php echo $value->ID; ?>" name="user[]">
 							</th>
 							<td class="column-username">
 								<?php echo get_avatar($value->ID, 32); ?>
@@ -119,15 +118,6 @@ $totalUsers = count(get_users());
 					</tbody>
 				</table>
 				<div class="tablenav bottom">
-					<div class="alignleft actions bulkactions">
-						<label class="screen-reader-text" for="bulk-action-selector-bottom">Select bulk action</label>
-						<select id="bulk-action-selector-bottom" name="action2">
-							<option selected="selected" value="-1">Bulk Actions</option>
-							<option class="hide-if-no-js" value="edit">Edit</option>
-							<option value="trash">Move to Trash</option>
-						</select>
-						<input type="submit" value="Apply" class="button action" id="doaction2" name="">
-					</div>
 					<div class="tablenav-pages one-page">
 						<span class="displaying-num"><?php echo $totalUsers; ?> users</span>
 						<br class="clear">
