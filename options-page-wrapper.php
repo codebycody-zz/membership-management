@@ -1,5 +1,4 @@
 <?php
-
 $totalUsers = count(get_users());
 
 if(isset($_POST['new_role']) && isset($_POST['user'])){
@@ -97,22 +96,13 @@ if(isset($_POST['new_role']) && isset($_POST['user'])){
 							</th>
 							<td class="column-username">
 								<?php echo get_avatar($value->ID, 32); ?>
-								<!-- <img width="32" height="32" src="http://0.gravatar.com/avatar/860f18082c7c5d1c1b1d25c592daf93e?s=32&amp;d=http%3A%2F%2F0.gravatar.com%2Favatar%2Fad516503a11cd5ca435acc9bb6523536%3Fs%3D32&amp;r=G" alt=""> -->
 								<strong><a href=""><?php echo $value->user_login; ?></a></strong><br>
-								<div class="row-actions">
-									<span class="edit">
-										<a href="http://localhost/wordpress/wp-admin/user-edit.php?user_id=3&amp;wp_http_referer=%2Fwordpress%2Fwp-admin%2Fusers.php">Edit</a> | 
-									</span>
-									<span class="delete">
-										<a href="users.php?action=delete&amp;user=3&amp;_wpnonce=0e1917cd6f" class="submitdelete">Delete</a>
-									</span>
-								</div>
 							</td>
 							<td class="column-name"><?php echo $value->display_name; ?></td>
 							<td class="column-email">
 								<a title="E-mail: <?php echo $value->user_email; ?>" href="mailto:<?php echo $value->user_email; ?>"><?php echo $value->user_email; ?></a>
 							</td>
-							<td class="column-membership"><?php echo $value->membership_management_level; ?></td>
+							<td class="column-membership"><?php if($value->membership_management_level == 1){echo "Gold";}elseif($value->membership_management_level == 2){echo "Silvier";}elseif($value->membership_management_level == 3){echo "Bronze";} ?></td>
 						</tr>
 						<?php } ?>
 					</tbody>

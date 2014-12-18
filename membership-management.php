@@ -64,9 +64,6 @@ function mt_add_pages() {
 /*
  * membership_management_page() displays the page content for the custom Test Toplevel menu
  */
-/*
- * Check if the user can manage plugin options
- */
 function membership_management_page(){
 	if(!current_user_can('manage_options')){
 		wp_die('You do not have sufficient permissions to access this page.');
