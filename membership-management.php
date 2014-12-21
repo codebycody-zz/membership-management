@@ -85,8 +85,8 @@ function membership_management_shortcode( $atts, $content = null ) {
     ), $atts );
 	$id = $a['level'];
 	$row = $wpdb->get_row( $wpdb->prepare('SELECT membership_management_level FROM ' . $table_name . ' WHERE id = %d', $current_user->ID) );
-
-	if($id >= $row->membership_management_level){
+	$htmlString = null;
+	if($id >= $row->membership_management_level && $row->membership_management_level != null){;
 		$htmlString = $content;
 	}elseif($id == 1){
 		$htmlString = stripslashes($upgradecode['goldupgradecode']);
