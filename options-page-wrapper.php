@@ -1,5 +1,6 @@
 <?php
 $totalUsers = count(get_users());
+$upgradecode = get_option('member_management_upgrade_code');
 
 if(isset($_POST['new_role']) && isset($_POST['user'])){
 	$users = $_POST['user'];
@@ -10,7 +11,20 @@ if(isset($_POST['new_role']) && isset($_POST['user'])){
 		$wpdb->query($sql);
 	}
 }
-
+if(isset($_POST['goldupgradecode']) || isset($_POST['silverupgradecode']) || isset($_POST['bronzeupgradecode'])){
+	if(isset($_POST['goldupgradecode']) && $_POST['goldupgradecode'] != ''){
+		$upgradecode['goldupgradecode'] = $_POST['goldupgradecode'];
+		update_option('member_management_upgrade_code', $upgradecode);
+	}
+	if(isset($_POST['silverupgradecode']) && $_POST['silverupgradecode'] != ''){
+		$upgradecode['silverupgradecode'] = $_POST['silverupgradecode'];
+		update_option('member_management_upgrade_code', $upgradecode);
+	}
+	if(isset($_POST['bronzeupgradecode']) && $_POST['bronzeupgradecode'] != ''){
+		$upgradecode['bronzeupgradecode'] = $_POST['bronzeupgradecode'];
+		update_option('member_management_upgrade_code', $upgradecode);
+	}
+}
 
 
 ?>
@@ -114,9 +128,11 @@ if(isset($_POST['new_role']) && isset($_POST['user'])){
 				</div><!-- post-body-content -->
 			</form>
 			<!-- sidebar start -->
-			<div id="postbox-container-1">
+			<div id="postbox-container-1" class="membership_sidebar">
+				<a href="#" class="nav-tab nav-tab-active">Shortcodes</a>
+				<a href="#" class="nav-tab">Upgrade code</a>
 				<div class="meta-box-sortables">
-					<div class="postbox">
+					<div class="postbox nav-box">
 						<h3><span>Membership Levels</span></h3>
 						<div class="inside">
 							<h2>Gold</h2>
@@ -125,6 +141,25 @@ if(isset($_POST['new_role']) && isset($_POST['user'])){
 							<p><b>[membership management level=2]</b><br>This is the content that should only show to a silver member or higher<br><b>[/membership management]</b></p>
 							<h2>Bronze</h2>
 							<p><b>[membership management level=3]</b><br>This is the content that should only show to a bronze member or higher<br><b>[/membership management]</b></p>
+						</div> <!-- .inside -->
+					</div> <!-- .postbox -->
+					<div class="postbox nav-box" style="display:none;">
+						<h3><span>Upgrade code</span></h3>
+						<div class="inside">
+							<form method="post" action="">
+								<h2>Gold</h2>
+								<textarea name="goldupgradecode"><?php echo $upgradecode['goldupgradecode']; ?></textarea>
+								<br><br>
+								<input type="submit" value="Save" class="button" name="updateupgradecode">
+								<h2>Silver</h2>
+								<textarea name="silverupgradecode"><?php echo $upgradecode['silverupgradecode']; ?></textarea>
+								<br><br>
+								<input type="submit" value="Save" class="button" name="updateupgradecode">
+								<h2>Bronze</h2>
+								<textarea name="bronzeupgradecode"><?php echo $upgradecode['bronzeupgradecode']; ?></textarea>
+								<br><br>
+								<input type="submit" value="save" class="button" name="updateupgradecode">
+							</form>
 						</div> <!-- .inside -->
 					</div> <!-- .postbox -->
 				</div> <!-- .meta-box-sortables -->

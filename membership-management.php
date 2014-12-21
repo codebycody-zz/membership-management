@@ -17,34 +17,35 @@
 
 
 /*
- * Create the extra column on the user table needed for plugin when plugin is activated
+ * Create the extra column on the user table needed for plugin when plugin is activated and option to the options table
  */
 function mma_edit_user_table(){
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'users';
 	$sql = 'ALTER TABLE ' . $table_name . ' ADD membership_management_level int';
 	$wpdb->query($sql);
+
+	$options = array('goldupgradecode' => null,'silverupgradecode' => null,'bronzeupgradecode' => null);
+	add_option('member_management_upgrade_code', $options);
 }
 register_activation_hook(__FILE__, 'mma_edit_user_table');
 
+
 /*
- * Remove the extra column on the user table needed for plugin when plugin is deactivated
+ * Remove the extra column on the user table and the options from the options table needed for plugin when plugin is deactivated
  */
 function mma_delete_column_user_table(){
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'users';
 	$sql = 'ALTER TABLE ' . $table_name . ' DROP COLUMN membership_management_level';
 	$wpdb->query($sql);
+
+	delete_option('member_management_upgrade_code');
 }
 register_deactivation_hook(__FILE__, 'mma_delete_column_user_table');
 
 /*
  * Hook for adding admin menus
- */
-add_action('admin_menu', 'mt_add_pages');
-
-/*
- * action function for above hook
  */
 function mt_add_pages() {
 	global $plugin_url;
@@ -58,8 +59,8 @@ function mt_add_pages() {
 		WP_PLUGIN_URL . '/membership-management/img/contact_card.png'
 		
 	);
-
 }
+add_action('admin_menu', 'mt_add_pages');
 
 /*
  * membership_management_page() displays the page content for the custom Test Toplevel menu
@@ -76,6 +77,7 @@ function membership_management_page(){
  */
 function membership_management_shortcode( $atts, $content = null ) {
 	global $wpdb;
+	$upgradecode = get_option('member_management_upgrade_code');
 	$current_user = wp_get_current_user();
 	$table_name = $wpdb->prefix . 'users';
     $a = shortcode_atts( array(
@@ -86,13 +88,26 @@ function membership_management_shortcode( $atts, $content = null ) {
 
 	if($id >= $row->membership_management_level){
 		$htmlString = $content;
-	}else{
-		$htmlString = 'sorry can\'t view';
+	}elseif($id == 1){
+		$htmlString = stripslashes($upgradecode['goldupgradecode']);
+	}elseif($id == 2){
+		$htmlString = stripslashes($upgradecode['silverupgradecode']);
+	}elseif ($id == 3){
+		$htmlString = stripslashes($upgradecode['bronzeupgradecode']);
 	}
 	return $htmlString;
 }
 add_shortcode( 'membership management', 'membership_management_shortcode' );
 
-
-
+/*
+ * Add the javascript to the admin options page only
+ */
+function add_membership_management_javascript_to_admin($hook) {
+	if ( 'toplevel_page_manage_options' != $hook ) {
+		return;
+	}
+	wp_enqueue_script('jquery');
+	wp_enqueue_script( 'my_custom_script', plugin_dir_url( __FILE__ ) . '/js/main.js' );
+}
+add_action('admin_enqueue_scripts', 'add_membership_management_javascript_to_admin');
 ?>
